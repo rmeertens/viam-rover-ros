@@ -22,10 +22,18 @@ def generate_launch_description():
             arguments=['--params-file', '/home/roland/ros2_ws/src/viam_rover_package/config/usb_cam.yaml'],
             name='usb_cam'
         ),
+        # Node(
+        #     package='tf2_ros',
+        #     executable='static_transform_publisher',
+        #     arguments=['0.2', '0.0', '0.3', '1.57', '3.14', '1.57', 'base_link', 'default_cam'],
+        #     name='static_transform_publisher'
+        # ),
+        # Urdf 
         Node(
-            package='tf2_ros',
-            executable='static_transform_publisher',
-            arguments=['0.2', '0.0', '0.3', '1.57', '1.57', '0.0', 'base_link', 'default_cam'],
-            name='static_transform_publisher'
-        )
+            package='robot_state_publisher',
+            executable='robot_state_publisher',
+            name='robot_state_publisher',
+            output='screen',
+            arguments=['/home/roland/ros2_ws/src/viam-rover-ros/description/viam_rover_description.urdf']
+        ),
     ])
