@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+
+
+
+<robot name="viam_rover">
+  <material name="black">
+    <color rgba="0 0 0 1"/>
+  </material>
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="0.5 0.6 0.15"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+  </link>
+
+  <link name="default_cam">
+    <visual>
+      <geometry>
+        <cylinder length="0.1" radius="0.035"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+  </link>
+  <joint name="default_cam_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="default_cam"/>
+    <origin rpy="1.57 3.14 1.57" xyz="0.2 0.0 0.1"/>
+  </joint>
+  
+  <link name="scan">
+    <visual>
+      <geometry>
+        <cylinder length="0.1" radius="0.035"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+  </link>
+  <joint name="scan_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="scan"/>
+    <origin rpy="0.0 0.0 0.0" xyz="0.2 0.0 0.1"/>
+  </joint>
+  
+
+  
+
+    <link name="right_wheel">
+    <visual>
+      <geometry>
+        <cylinder length="0.1" radius="0.064"/>
+      </geometry>
+      <origin rpy="1.57 1.57075 0" xyz="0 0.13 0"/>
+      <material name="black"/>
+    </visual>
+  </link>
+  <joint name="right_wheel_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="right_wheel"/>
+    <origin rpy="0 0 0" xyz="0.0 0.13 -0.02"/>
+  </joint>
+
+
+  <link name="left_wheel">
+    <visual>
+      <geometry>
+        <cylinder length="0.1" radius="0.064"/>
+      </geometry>
+      <origin rpy="1.57 1.57075 0" xyz="0 -0.2 0.0"/>
+      <material name="black"/>
+    </visual>
+  </link>
+  <joint name="left_wheel_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="left_wheel"/>
+    <origin rpy="0 0 0" xyz="0.0 -0.13 -0.02"/>
+  </joint>
+  
+
+</robot>

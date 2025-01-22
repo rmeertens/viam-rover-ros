@@ -36,4 +36,59 @@ def generate_launch_description():
             output='screen',
             arguments=['/home/roland/ros2_ws/src/viam-rover-ros/description/viam_rover_description.urdf']
         ),
+
+        # Node(
+        #     package='tf2_ros',
+        #     executable='static_transform_publisher',
+        #     name='static_tf_pub',
+        #     arguments=['0', '0', '0', '0', '0', '0', '1', 'map', 'odom'],
+        #     output='screen',
+        # ),
+        Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            name='some_publisher',
+            arguments=['0', '0', '0', '0', '0', '0', 'odom', 'base_footprint'],
+            output='screen',
+        ),
+        Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            name='some_publisher_2',
+            arguments=['0', '0', '0', '0', '0', '0', 'base_footprint', 'base_link'],
+            output='screen',
+        ),
+         Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            name='some_publisher_3',
+            arguments=['0', '0', '0', '0', '0', '0', 'map', 'odom'],
+            output='screen',
+        ),
+        # Node(
+        #     package='tf2_ros',
+        #     executable='static_transform_publisher',
+        #     name='some_publisher_2',
+        #     arguments=['0', '0', '0', '0', '0', '0', '0', 'base_footprint', 'base_link'],
+        #     output='screen',
+        # ),
+        # Node(
+        #     package='tf2_ros',
+        #     executable='static_transform_publisher',
+        #     name='some_publisher_3',
+        #     arguments=['0', '0', '0', '0', '0', '0', '0', 'map', 'odom'],
+        #     output='screen',
+        # ),
+        
+#ros2 run nav2_map_server map_server /home/roland/ros2_ws/src/viam-rover-ros/map/map.yaml
+        # Node(
+        #     package='nav2_map_server',
+        #     executable='map_server',
+        #     name='map_server',
+        #     output='screen',
+        #     parameters=[
+        #         {'yaml_filename': '/home/roland/ros2_ws/src/viam-rover-ros/map/map.yaml'}
+        #     ]
+        #     # arguments=['/home/roland/ros2_ws/src/viam-rover-ros/map/map.yaml']
+        # )
     ])
