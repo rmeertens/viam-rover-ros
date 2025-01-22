@@ -15,13 +15,13 @@ def generate_launch_description():
             executable='foxglove_bridge',
             name='foxglove_bridge'
         ),
-        Node(
-            package='usb_cam',
-            namespace='usb_cam',
-            executable='usb_cam_node_exe',
-            arguments=['--params-file', '/home/roland/ros2_ws/src/viam_rover_package/config/usb_cam.yaml'],
-            name='usb_cam'
-        ),
+        # Node(
+        #     package='usb_cam',
+        #     namespace='usb_cam',
+        #     executable='usb_cam_node_exe',
+        #     arguments=['--params-file', '/home/roland/ros2_ws/src/viam_rover_package/config/usb_cam.yaml'],
+        #     name='usb_cam'
+        # ),
         # Node(
         #     package='tf2_ros',
         #     executable='static_transform_publisher',
