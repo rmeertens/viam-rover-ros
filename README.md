@@ -28,19 +28,17 @@ ros2 launch src/viam-rover-ros/launch/viam_rover_joystick_launch.py
 ```
 You can edit the above launch file to use your own controller by changing the `joy_config` parameter from `xd3` to your controller name. 
 
-## Setting waypoints
+### Setting waypoints
 As the robot has no way to get distance measurements it does not have 'global localisation' capabilities. However, I hacked together a way to set waypoints relative to the robot. 
 
 You can start my nav stack by running the following command:
 ```bash
 ros2 launch src/viam-rover-ros/launch/viam_rover_local_nav_launch.py params_file:=/home/roland/ros2_ws/src/viam-rover-ros/config/nav2_params.yaml 
 ```
+You can then set a goal by publishing to the `/goal_pose` topic. The message type is `geometry_msgs/PoseStamped`. I personally do this using Foxglove, but you can also do this with RVIZ. Note that in FoxGlove you have to adapt the topic in the 3D view. 
 
-ros2 service call /map_server/load_map nav2_msgs/srv/LoadMap "{map_url: /home/roland/ros2_ws/src/viam-rover-ros/map/map.yaml}"
+## Visualisation
+Common tools for visualisation are RVIZ and FoxGlove. I personally prefer FoxGlove, and I created several configurations I used for the rover. You can find them in the `foxglove_configs` folder.
 
-
-
-
-
-# Notes
-All GPIO control has to be in one package if you want to keep it pure python as only one process can control the GPIO pins... 
+## Notes
+Initially I wanted to split the control into an odometry node and a motor control node. However, I found that this was not possible as the GPIO pins can only be controlled by one process. Therefore, I combined the two nodes into one. It would still be nice to rewrite the code such that you can only set the motor 'power' through ROS and have another package handle the heavy lifting of calculating the power needed to reach a certain speed.
