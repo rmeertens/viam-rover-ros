@@ -276,7 +276,7 @@ global_costmap:
 # file & provide full path to map below. If CLI map configuration or launch default is provided, that will be used.
 map_server:
   ros__parameters:
-    yaml_filename: "/home/roland/ros2_ws/src/viam-rover-ros/map/map.yaml"
+    yaml_filename: "/home/roland/ros2_ws/src/viam-rover-ros/map/cage_map.yaml"
 
 # map_saver:
 #   ros__parameters:
