@@ -1,0 +1,285 @@
+{
+  "configById": {
+    "Image!2ekff2o": {
+      "cameraState": {
+        "distance": 20,
+        "perspective": true,
+        "phi": 60,
+        "target": [
+          0,
+          0,
+          0
+        ],
+        "targetOffset": [
+          0,
+          0,
+          0
+        ],
+        "targetOrientation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "thetaOffset": 45,
+        "fovy": 45,
+        "near": 0.5,
+        "far": 5000
+      },
+      "followMode": "follow-pose",
+      "scene": {},
+      "transforms": {},
+      "topics": {},
+      "layers": {},
+      "publish": {
+        "type": "point",
+        "poseTopic": "/move_base_simple/goal",
+        "pointTopic": "/clicked_point",
+        "poseEstimateTopic": "/initialpose",
+        "poseEstimateXDeviation": 0.5,
+        "poseEstimateYDeviation": 0.5,
+        "poseEstimateThetaDeviation": 0.26179939
+      },
+      "imageMode": {
+        "imageTopic": "/usb_cam/image_raw/compressed"
+      }
+    },
+    "RawMessages!11ych2p": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/odom",
+      "fontSize": 12
+    },
+    "3D!32po1sd": {
+      "cameraState": {
+        "perspective": true,
+        "distance": 12.604988194394293,
+        "phi": 49.93166873662615,
+        "thetaOffset": 104.16059696817445,
+        "targetOffset": [
+          2.980349394638429,
+          -0.9767254459816549,
+          -6.34754236981778e-16
+        ],
+        "target": [
+          0,
+          0,
+          0
+        ],
+        "targetOrientation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "fovy": 45,
+        "near": 0.5,
+        "far": 5000
+      },
+      "followMode": "follow-pose",
+      "scene": {
+        "syncCamera": false,
+        "labelScaleFactor": 0.7,
+        "meshUpAxis": "y_up"
+      },
+      "transforms": {},
+      "topics": {
+        "/usb_cam/image_raw": {
+          "cameraInfoTopic": "/usb_cam/camera_info"
+        },
+        "/usb_cam/image_raw/compressed": {
+          "cameraInfoTopic": "/usb_cam/camera_info",
+          "planarProjectionFactor": 0.5,
+          "distance": 1.5,
+          "visible": true
+        },
+        "/move_base_simple/goal": {
+          "visible": false
+        },
+        "/initialpose": {
+          "visible": true
+        },
+        "/usb_cam/image_raw/compressedDepth": {
+          "visible": false
+        },
+        "/usb_cam/image_raw/zstd": {
+          "visible": false
+        },
+        "/robot_description": {
+          "visible": true,
+          "displayMode": "auto",
+          "showAxis": true,
+          "links": {
+            "left_wheel": {
+              "visible": true
+            },
+            "right_wheel": {
+              "visible": true
+            }
+          }
+        },
+        "/dock_pose": {
+          "visible": false
+        },
+        "/detected_dock_pose": {
+          "visible": false
+        },
+        "/collision_monitor/collision_points_marker": {
+          "visible": false
+        },
+        "/filtered_dock_pose": {
+          "visible": true
+        },
+        "/global_costmap/costmap": {
+          "visible": true
+        },
+        "/global_costmap/obstacle_layer": {
+          "visible": false
+        },
+        "/global_costmap/static_layer": {
+          "visible": false
+        },
+        "/goal_pose": {
+          "visible": true
+        },
+        "/local_costmap/clearing_endpoints": {
+          "visible": false
+        },
+        "/local_costmap/costmap": {
+          "visible": false
+        },
+        "/local_costmap/voxel_layer": {
+          "visible": false
+        },
+        "/map": {
+          "visible": false
+        },
+        "/scan": {
+          "visible": true,
+          "colorField": "intensity",
+          "colorMode": "colormap",
+          "colorMap": "turbo"
+        },
+        "/staging_pose": {
+          "visible": false
+        },
+        "/trajectories": {
+          "visible": false
+        },
+        "/usb_cam/camera_info": {
+          "visible": false
+        },
+        "/global_costmap/published_footprint": {
+          "visible": false
+        },
+        "/local_costmap/published_footprint": {
+          "visible": false
+        },
+        "/optimal_trajectory": {
+          "visible": false
+        },
+        "/plan": {
+          "visible": false
+        },
+        "/plan_smoothed": {
+          "visible": false
+        },
+        "/transformed_global_plan": {
+          "visible": false
+        },
+        "/docking_trajectory": {
+          "visible": false
+        },
+        "/global_costmap/scan": {
+          "visible": true
+        },
+        "/local_costmap/scan": {
+          "visible": false
+        }
+      },
+      "layers": {
+        "grid": {
+          "visible": true,
+          "frameLocked": true,
+          "label": "Grid",
+          "instanceId": "bbcb3e44-73e2-4ab1-9a72-6730690d0765",
+          "layerId": "foxglove.Grid",
+          "size": 10,
+          "divisions": 10,
+          "lineWidth": 1,
+          "color": "#248eff",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "frameId": "world"
+        }
+      },
+      "publish": {
+        "type": "pose",
+        "poseTopic": "/move_base_simple/goal",
+        "pointTopic": "/clicked_point",
+        "poseEstimateTopic": "/initialpose",
+        "poseEstimateXDeviation": 0.5,
+        "poseEstimateYDeviation": 0.5,
+        "poseEstimateThetaDeviation": 0.26179939
+      },
+      "imageMode": {},
+      "followTf": "world"
+    },
+    "Teleop!3t0ll8f": {
+      "publishRate": 1,
+      "upButton": {
+        "field": "linear-x",
+        "value": 1
+      },
+      "downButton": {
+        "field": "linear-x",
+        "value": 0
+      },
+      "leftButton": {
+        "field": "angular-z",
+        "value": 1
+      },
+      "rightButton": {
+        "field": "angular-z",
+        "value": -1
+      },
+      "stopButton": {
+        "field": "angular-z",
+        "value": -1
+      },
+      "topic": "/cmd_vel"
+    }
+  },
+  "globalVariables": {
+    "globalVariable": 7
+  },
+  "userNodes": {},
+  "playbackConfig": {
+    "speed": 1
+  },
+  "layout": {
+    "direction": "row",
+    "first": {
+      "first": "Image!2ekff2o",
+      "second": "RawMessages!11ych2p",
+      "direction": "column"
+    },
+    "second": {
+      "direction": "row",
+      "first": "3D!32po1sd",
+      "second": "Teleop!3t0ll8f",
+      "splitPercentage": 68.11955919362474
+    },
+    "splitPercentage": 16.959669079627716
+  }
+}
