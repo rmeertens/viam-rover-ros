@@ -79,7 +79,7 @@ class ViamRobotController(Node):
         self.tf_broadcaster = TransformBroadcaster(self)
 
         # Subscribe to the velocity topic. We try to keep the last velocity message in memory and keep up with that. 
-        self.create_subscription(Twist, '/cmd_vel_nav', self.velocity_callback, 3)
+        self.create_subscription(Twist, '/cmd_vel', self.velocity_callback, 3)
         self.last_velocity = None
 
         # Set up the timer for both the motor control and odometry update
