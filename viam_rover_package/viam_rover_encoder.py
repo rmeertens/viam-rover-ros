@@ -2,10 +2,13 @@ import rclpy
 from rclpy.node import Node
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Twist
+from sensor_msgs.msg import LaserScan
 from std_msgs.msg import String
 from geometry_msgs.msg import TransformStamped
 from tf2_ros import TransformBroadcaster
 import RPi.GPIO as GPIO
+
+
 import numpy as np
 
 import time
@@ -64,8 +67,9 @@ class ViamRobotController(Node):
 
         # Set up the publisher for the odometry
         # We update the odometry at a fixed rate, and broadcast the transform as well. 
-        self.odometry_publisher = self.create_publisher(Odometry, '/my_odom' , 10)
+        self.odometry_publisher = self.create_publisher(Odometry, '/odom' , 10)
         self.wheel_tick_publisher = self.create_publisher(String, '/wheel_ticks', 10)
+        self.laserscan_publisher = self.create_publisher(LaserScan, '/scan', 10)
 
         self.tf_broadcaster = TransformBroadcaster(self)
 
@@ -124,8 +128,8 @@ class ViamRobotController(Node):
     def publish_odometry_message(self, timestamp, velocity_xy, velocity_theta): 
         odometry_message = Odometry()
         odometry_message.header.stamp = timestamp.to_msg()
-        odometry_message.header.frame_id = 'roland_odom'
-        odometry_message.child_frame_id = 'base_link'
+        odometry_message.header.frame_id = 'odom'
+        odometry_message.child_frame_id = 'base_footprint'
         
         odometry_message.pose.pose.position.x = self.position_x 
         odometry_message.pose.pose.position.y = self.position_y
@@ -147,8 +151,8 @@ class ViamRobotController(Node):
         t = TransformStamped()
 
         t.header.stamp = self.get_clock().now().to_msg()
-        t.header.frame_id = 'world'
-        t.child_frame_id = 'base_link'
+        t.header.frame_id = 'odom'
+        t.child_frame_id = 'base_footprint'
         t.transform.translation.x = self.position_x
         t.transform.translation.y = self.position_y
         t.transform.translation.z = 0.0
@@ -207,6 +211,21 @@ class ViamRobotController(Node):
         self.last_encoder_left = self.left_encoder
         self.last_encoder_right = self.right_encoder
         self.last_time = timestamp
+
+        # Publish a laserscan message
+
+        laserscan_message = LaserScan()
+        laserscan_message.header.stamp = timestamp.to_msg()
+        laserscan_message.header.frame_id = 'scan'
+        laserscan_message.angle_min = -np.pi / 2
+        laserscan_message.angle_max = np.pi / 2
+        laserscan_message.angle_increment = np.pi / 180
+        laserscan_message.time_increment = 0.0
+        laserscan_message.scan_time = 0.0
+        laserscan_message.range_min = 0.0
+        laserscan_message.range_max = 10.0
+        laserscan_message.ranges = [15.5] * 180
+        self.laserscan_publisher.publish(laserscan_message)
 
     def motor_control_callback(self):
         global high_on
