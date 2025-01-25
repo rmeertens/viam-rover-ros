@@ -235,14 +235,24 @@ class ViamRobotController(Node):
             right_motor_speed = 0
             forward_speed = self.last_velocity.linear.x
             angular_speed = self.last_velocity.angular.z
+
+            self.get_logger().info(f"Forward speed: {forward_speed:.2f}, angular speed: {angular_speed:.2f}")
+
             wheel_circumference_mm = 217
             width_mm = 260
+            width_meters = width_mm / 1000
+            magic_turn_factor = 3.0
             MAX_PWM = 100
 
             # Calculate left motor speed and right motor speed
-            left_motor_speed = forward_speed + angular_speed * width_mm / 2
-            right_motor_speed = forward_speed - angular_speed * width_mm / 2
+            left_motor_speed = forward_speed + magic_turn_factor * angular_speed * width_meters / 2
+            right_motor_speed = forward_speed - magic_turn_factor * angular_speed * width_meters / 2
 
+            self.get_logger().info(f"Left motor speed: {left_motor_speed:.2f}, right motor speed: {right_motor_speed:.2f}")
+            left_motor_power = abs(left_motor_speed * 50.0)
+            right_motor_power = abs(right_motor_speed * 50.0)
+
+            self.get_logger().info(f"Left motor pwm: {left_motor_power:.2f}, right motor pwm: {right_motor_power:.2f}")
             # self.get_logger().info(f"Left motor speed: {left_motor_speed:.2f}, right motor speed: {right_motor_speed:.2f}")
 
             if left_motor_speed > 0:
@@ -257,12 +267,18 @@ class ViamRobotController(Node):
                 GPIO.output(LEFT_MOTOR_A, GPIO.LOW)
                 GPIO.output(LEFT_MOTOR_B, GPIO.LOW)
             
-            left_motor_pwm = abs(left_motor_speed * 50)
-            if left_motor_pwm != 0:
-                left_motor_pwm = max(1, min(left_motor_pwm, MAX_PWM))
-                if left_motor_pwm != self.last_pwm_left:
-                    self.last_pwm_left = left_motor_pwm
-                    self.pwm_left.ChangeFrequency(left_motor_pwm)
+            
+            if left_motor_power != 0:
+                # left_motor_pwm = max(1, min(left_motor_pwm, MAX_PWM))
+
+                # clip between 0 and 1 
+                left_motor_power = max(0, min(left_motor_power, 100))
+                self.get_logger().info(f"Setting left motor power to {left_motor_power:.2f}")
+                if left_motor_power != self.last_pwm_left:
+                    self.last_pwm_left = left_motor_power
+                    
+                    self.pwm_left.ChangeDutyCycle(left_motor_power)
+                    # self.pwm_left.ChangeFrequency(left_motor_pwm)
 
             
             if right_motor_speed > 0:
@@ -277,13 +293,16 @@ class ViamRobotController(Node):
                 GPIO.output(RIGHT_MOTOR_A, GPIO.LOW)
                 GPIO.output(RIGHT_MOTOR_B, GPIO.LOW)
             
-            right_motor_pwm = abs(right_motor_speed * 50)
-            if right_motor_pwm != 0:
+            
+            if left_motor_power != 0:
                 
-                right_motor_pwm = max(1, min(right_motor_pwm, MAX_PWM))
-                if right_motor_pwm != self.last_pwm_right:
-                    self.last_pwm_right = right_motor_pwm
-                    self.pwm_right.ChangeFrequency(right_motor_pwm)
+                # right_motor_pwm = max(1, min(right_motor_pwm, MAX_PWM))
+                right_motor_power = max(0, min(right_motor_power, 100))
+                self.get_logger().info(f"Setting right motor power to {right_motor_power:.2f}")
+                if right_motor_power != self.last_pwm_right:
+                    self.last_pwm_right = right_motor_power
+                    # self.pwm_right.ChangeFrequency(right_motor_pwm)
+                    self.pwm_right.ChangeDutyCycle(right_motor_power)
      
 
 
@@ -314,8 +333,10 @@ def main(args=None):
 
     viam_robot_controller.pwm_left = GPIO.PWM(LEFT_MOTOR_ENABLE_ON, 10)
     viam_robot_controller.pwm_right = GPIO.PWM(RIGHT_MOTOR_ENABLE_ON, 10)
-    viam_robot_controller.pwm_left.start(50)
-    viam_robot_controller.pwm_right.start(50)
+    viam_robot_controller.pwm_left.ChangeFrequency(200)
+    viam_robot_controller.pwm_right.ChangeFrequency(200)
+    viam_robot_controller.pwm_left.start(0.0)
+    viam_robot_controller.pwm_right.start(0.0)
 
     # Set up the robot controller node and spin it
     rclpy.spin(viam_robot_controller)
