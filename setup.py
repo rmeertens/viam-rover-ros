@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'viam_rover_node = viam_rover_package.viam_rover_node:main'
+            'viam_rover_encoder = viam_rover_package.viam_rover_encoder:main',
+            # 'viam_rover_motor_control = viam_rover_package.viam_rover_motor_control:main'
         ],
     },
 )

@@ -12,7 +12,13 @@ def generate_launch_description():
         Node(
             package='viam_rover_package',
             namespace='viam_rover',
-            executable='viam_rover_node',
-            name='viam_rover'
+            executable='viam_rover_encoder',
+            name='viam_rover_enc'
         ),
+        # Node(
+        #     package='foxglove_bridge',
+        #     namespace='foxglove_bridge',
+        #     executable='foxglove_bridge',
+        #     name='foxglove_bridge'
+        # ),
     ])
