@@ -9,6 +9,9 @@ from tf2_ros import TransformBroadcaster
 import RPi.GPIO as GPIO
 
 
+from geometry_msgs.msg import Vector3
+
+
 import numpy as np
 
 import time
@@ -70,11 +73,13 @@ class ViamRobotController(Node):
         self.odometry_publisher = self.create_publisher(Odometry, '/odom' , 10)
         self.wheel_tick_publisher = self.create_publisher(String, '/wheel_ticks', 10)
         self.laserscan_publisher = self.create_publisher(LaserScan, '/scan', 10)
+        self.my_speed_publisher = self.create_publisher(Vector3, '/my_speed', 10)
+        self.my_set_speed_publisher = self.create_publisher(Vector3, '/my_set_speed', 10)
 
         self.tf_broadcaster = TransformBroadcaster(self)
 
         # Subscribe to the velocity topic. We try to keep the last velocity message in memory and keep up with that. 
-        self.create_subscription(Twist, '/cmd_vel', self.velocity_callback, 10)
+        self.create_subscription(Twist, '/cmd_vel_nav', self.velocity_callback, 3)
         self.last_velocity = None
 
         # Set up the timer for both the motor control and odometry update
@@ -192,6 +197,13 @@ class ViamRobotController(Node):
         left_speed = left_distance / delta_time
         right_speed = right_distance / delta_time
 
+        # Publish the speed message as debug measure
+        my_speed_message = Vector3()
+        my_speed_message.x = left_speed
+        my_speed_message.y = right_speed
+        my_speed_message.z = 0.0
+        self.my_speed_publisher.publish(my_speed_message)
+
         delta_xy = (left_distance + right_distance) / 2
         delta_theta = (left_distance - right_distance) / DISTANCE_BETWEEN_WHEELS_M
         velocity_xy = delta_xy / delta_time
@@ -239,20 +251,70 @@ class ViamRobotController(Node):
             self.get_logger().info(f"Forward speed: {forward_speed:.2f}, angular speed: {angular_speed:.2f}")
 
             wheel_circumference_mm = 217
-            width_mm = 260
-            width_meters = width_mm / 1000
-            magic_turn_factor = 3.0
+            width_meters = 0.260 # 260 mm, or 26cm between the wheels
+            MAX_SPEED = 0.3 # On my robot the wheels can't turn faster than this speed... 
+
+
             MAX_PWM = 100
 
+            MAGIC_POWER_FACTOR = 100.0
+            USE_LOOKUP_TABLE_SPEED = True
+
+            # MAGIC_TURN_FACTOR = 1.0
+            # LINEAR_MAGIC_SPEED_FACTOR = 1.0
+
+            # forward_speed = forward_speed * LINEAR_MAGIC_SPEED_FACTOR
+
             # Calculate left motor speed and right motor speed
-            left_motor_speed = forward_speed + magic_turn_factor * angular_speed * width_meters / 2
-            right_motor_speed = forward_speed - magic_turn_factor * angular_speed * width_meters / 2
+            left_motor_speed = forward_speed + angular_speed * width_meters / 2
+            right_motor_speed = forward_speed - angular_speed * width_meters / 2
 
-            self.get_logger().info(f"Left motor speed: {left_motor_speed:.2f}, right motor speed: {right_motor_speed:.2f}")
-            left_motor_power = abs(left_motor_speed * 50.0)
-            right_motor_power = abs(right_motor_speed * 50.0)
+            # Clip the speed to the maximum speed
+            left_motor_speed = max(-MAX_SPEED, min(left_motor_speed, MAX_SPEED))
+            right_motor_speed = max(-MAX_SPEED, min(right_motor_speed, MAX_SPEED))
 
-            self.get_logger().info(f"Left motor pwm: {left_motor_power:.2f}, right motor pwm: {right_motor_power:.2f}")
+            # Publish the set speed as debug measure
+            my_set_speed_message = Vector3()
+            my_set_speed_message.x = left_motor_speed
+            my_set_speed_message.y = right_motor_speed
+            my_set_speed_message.z = 0.0
+            self.my_set_speed_publisher.publish(my_set_speed_message)
+
+
+            if USE_LOOKUP_TABLE_SPEED: 
+                known_speed_to_power = [
+                    (0.0, 0.0),
+                    (0.001, 0.0),
+                    (0.01, 15.0),
+                    (0.04, 18.0),
+                    (0.07, 20.0),
+                    (0.15, 30.0),
+                    (0.20, 40.0),
+                    (0.22, 50.0),
+                    (0.25, 60.0),
+                    (0.26, 70.0),
+                    (0.27, 85.0),
+                    (0.3, 100.0),
+                    (100000, 100.0), # Anything above this is 100 percent power
+                ]
+
+                left_motor_power = 0
+                right_motor_power = 0
+                for speed, power in known_speed_to_power:
+                    if speed > abs(left_motor_speed):
+                        left_motor_power = power
+                        break
+                for speed, power in known_speed_to_power:
+                    if speed > abs(right_motor_speed):
+                        right_motor_power = power
+                        break
+
+            else: 
+                # self.get_logger().info(f"Left motor speed: {left_motor_speed:.2f}, right motor speed: {right_motor_speed:.2f}")
+                left_motor_power = abs(left_motor_speed * MAGIC_POWER_FACTOR)
+                right_motor_power = abs(right_motor_speed * MAGIC_POWER_FACTOR)
+
+            # self.get_logger().info(f"Left motor pwm: {left_motor_power:.2f}, right motor pwm: {right_motor_power:.2f}")
             # self.get_logger().info(f"Left motor speed: {left_motor_speed:.2f}, right motor speed: {right_motor_speed:.2f}")
 
             if left_motor_speed > 0:
