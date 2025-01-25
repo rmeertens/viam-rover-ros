@@ -5,31 +5,25 @@ import RPi.GPIO as GPIO
 
 from std_msgs.msg import String
 
-BUTTON_GPIO = 16
+LEFT_ENCODER_GPIO = 19
+RIGHT_ENCODER_GPIO = 26
 
-high_on = 0
-def button_callback(channel):
-    global high_on
-    if GPIO.input(BUTTON_GPIO):
-        high_on = 1
-    else:
-        high_on = 0
+RIGHT_MOTOR_ENABLE_ON=22
+RIGHT_MOTOR_A = 16
+RIGHT_MOTOR_B = 18
 
+left_encoder = 0
+right_encoder = 0
 
-class MinimalSubscriber(Node):
+def left_encoder_callback(channel):
+    global left_encoder
+    if GPIO.input(LEFT_ENCODER_GPIO):
+        left_encoder += 1
 
-    def __init__(self):
-        super().__init__('minimal_subscriber')
-        self.subscription = self.create_subscription(
-            String,
-            'topic',
-            self.listener_callback,
-            10)
-        self.subscription  # prevent unused variable warning
-
-    def listener_callback(self, msg):
-        self.get_logger().info('I heard: "%s"' % msg.data)
-
+def right_encoder_callback(channel): 
+    global right_encoder
+    if GPIO.input(RIGHT_ENCODER_GPIO): 
+        right_encoder += 1
 
 
 class MinimalPublisher(Node):
@@ -39,9 +33,12 @@ class MinimalPublisher(Node):
         self.publisher_ = self.create_publisher(String, 'random_publish_topic', 10)
         timer_period = 0.5  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
+        print("minimal published init")
         self.i = 0
 
     def timer_callback(self):
+        global high_on
+        print("hello world", left_encoder, right_encoder)
         msg = String()
         msg.data = 'Hello World: %d' % self.i
         self.publisher_.publish(msg)
@@ -56,24 +53,30 @@ def main(args=None):
     # Set up the GPIO nodes for odometry
     GPIO.setmode(GPIO.BCM)
     
-    GPIO.setup(BUTTON_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.setup(LED_GPIO, GPIO.OUT)   
-    GPIO.add_event_detect(BUTTON_GPIO, GPIO.BOTH, 
-            callback=button_callback)
+    GPIO.setup(LEFT_ENCODER_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(RIGHT_ENCODER_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.add_event_detect(LEFT_ENCODER_GPIO, GPIO.BOTH, callback=left_encoder_callback)
+    GPIO.add_event_detect(RIGHT_ENCODER_GPIO, GPIO.BOTH, callback=right_encoder_callback)
     
     
+    RIGHT_MOTOR_ENABLE_ON=22
+    RIGHT_MOTOR_A = 16
+    RIGHT_MOTOR_B = 18
+    GPIO.setup(RIGHT_MOTOR_ENABLE_ON, GPIO.OUT)
+    GPIO.setup(RIGHT_MOTOR_A, GPIO.OUT)
+    GPIO.setup(RIGHT_MOTOR_B, GPIO.OUT)
+    p = GPIO.PWM(RIGHT_MOTOR_ENABLE_ON, 50)
+    r = GPIO.PWM(RIGHT_MOTOR_A, 0.5)
+    p.start(1)
+    r.start(1)
 
     minimal_publisher = MinimalPublisher()
-    minimal_subscriber = MinimalSubscriber()
-
-    rclpy.spin(minimal_subscriber)
     rclpy.spin(minimal_publisher)
 
     # Destroy the node explicitly
     # (optional - otherwise it will be done automatically
     # when the garbage collector destroys the node object)
     minimal_publisher.destroy_node()
-    minimal_subscriber.destroy_node()
     rclpy.shutdown()
     GPIO.cleanup()
 
