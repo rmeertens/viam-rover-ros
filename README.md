@@ -1,13 +1,17 @@
 # Viam Rover Ros
 This package is a ROS package for the Viam Rover. It completely replaces the Viam software and instead uses ROS to control the rover. I hope that it can provide a cheap entry point into the world of robotics for people who are interested in it as a hobby.
 
+![Viam Rover Bringing Beer](images/viam_bring_beer.jpeg)
+
 ## About the VIAM Rover
 The VIAM Rover is a small robot that is designed to be a cheap entry point into the world of robotics. It is based on the Raspberry Pi and uses a motor controller board to control the motors. The rover has a camera sensor, which can be used for remote control. 
 
 You set it up by following the tutorial on the VIAM website. For my robot that was: https://docs.viam.com/dev/reference/try-viam/rover-resources/rover-tutorial-1/. 
 
 ## Installation
-To install the package you need to clone the repository into your ros2 workspace and then run: 
+I personally used ROS2 Jazzy, with Ubuntu Noble (24.04) running on a Raspberry Pi 5. I used the Raspberry Pi imager, which you can download from [here](https://www.raspberrypi.com/software/).
+
+To install the viam rover package you need to clone the repository into your ros2 workspace (for me ~/ros2_ws) and then run: 
 ```bash
 colcon build
 ros2 launch src/viam-rover-ros/launch/viam_rover_launch.py
@@ -39,6 +43,13 @@ You can then set a goal by publishing to the `/goal_pose` topic. The message typ
 
 ## Visualisation
 Common tools for visualisation are RVIZ and FoxGlove. I personally prefer FoxGlove, and I created several configurations I used for the rover. You can find them in the `foxglove_configs` folder.
+The configurations I like are: 
+- Speed debug (Shows the speed of the robot over time. Allows you to tweak the base package)
+- Remote control (Shows the camera feed, and allows you to control the robot commands through Foxglove itself)
+- Navigate (Shows the camera feed and the relative position of the robot. Allows you to set waypoints to navigate to). 
+
+![Foxglove planning image](images/foxglove_planning.jpeg)
+
 
 ## Notes
 Initially I wanted to split the control into an odometry node and a motor control node. However, I found that this was not possible as the GPIO pins can only be controlled by one process. Therefore, I combined the two nodes into one. It would still be nice to rewrite the code such that you can only set the motor 'power' through ROS and have another package handle the heavy lifting of calculating the power needed to reach a certain speed.
